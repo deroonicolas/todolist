@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des tâche{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid min-vh-100 d-flex flex-column">
+
+  <div class="row text-center">
+    <div class="col-6 todo"><h1>A faire</h1></div>
+    <div class="col-6 done"><h1>Fait</h1></div>
+  </div>
+
+  <div class="row flex-grow-1">
+
+    <!-- Todo -->
+    <div class="column col-6 d-flex todo">
+      {% for task in tasks %}
+        {% if not task.isDone %}
+          {% include 'task/portlet.html.twig' with { 'task' : task, 'background' : 'bg-white'} %}
+        {% endif %}
+      {% endfor %} 
+    </div>
+
+    <!-- Done --> 
+    <div class="column col-6 d-flex done">
+      {% for task in tasks %}
+        {% if task.isDone %}
+          {% include 'task/portlet.html.twig' with { 'task' : task, 'background' : 'bg-info'} %}
+        {% endif %}
+      {% endfor %} 
+    </div>
+      
+  </div>
+</div>
+
+<script src="{{ asset('js/external/jquery.js') }}"></script>
+<script src="{{ asset('js/external/jquery-ui.min.js') }}"></script>
+
+{% endblock %}
