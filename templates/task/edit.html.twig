@@ -1,13 +1,16 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Task{% endblock %}
+{% block title %}Modifier la tâche{% endblock %}
 
-{% block body %}
-    <h1>Edit Task</h1>
+{% block content %}
+<div class="d-flex flex-column align-items-center justify-content-center">
 
-    {{ include('task/_form.html.twig', {'button_label': 'Update'}) }}
+  <h1 class="m-3">Modifier la tâche</h1>
 
-    <a href="{{ path('app_task_index') }}">back to list</a>
+    {{ include('task/_form.html.twig', {'button_label': 'Enregistrer'}) }}
 
-    {{ include('task/_delete_form.html.twig') }}
+    <a class="mt-3" href="{{ path('app_task_index') }}">Retour à la liste des tâches</a>
+
+</div>
+
 {% endblock %}

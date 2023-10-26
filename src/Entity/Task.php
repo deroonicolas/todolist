@@ -28,7 +28,8 @@ class Task
     #[ORM\ManyToOne(inversedBy: 'tasks', cascade : ["persist"])]
     private ?User $user = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\ManyToOne(inversedBy: 'tasks')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Skill $skill = null;
 
     public function getId(): ?int
@@ -93,6 +94,12 @@ class Task
     {
         $this->user = $user;
 
+        return $this;
+    }
+
+    public function toggleTask(?bool $flag): static
+    {
+        $this->isDone = $flag;
         return $this;
     }
 

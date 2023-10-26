@@ -18,11 +18,14 @@
     <div id="content">
       {% block content %}{% endblock %}
     </div>
+    <!-- Bootstrap JS -->
+    <script src="{{ asset('js/external/bootstrap.bundle.min.js') }}"></script>
+    <!-- jQuery -->
+    <script src="{{ asset('js/external/jquery.js') }}"></script>
+    <!-- jQuery UI -->
+    <script src="{{ asset('js/external/jquery-ui.min.js') }}"></script>
+    <!-- Personal script -->
+    <script src="{{ asset('js/script.js') }}"></script>
   </body>
-
-  <!-- Bootstrap JS -->
-  <script src="{{ asset('js/external/bootstrap.bundle.min.js') }}"></script>
-  <!-- Custom JS -->
-  <script src="{{ asset('js/script.js') }}"></script>
 
 </html>

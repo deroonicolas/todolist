@@ -11,71 +11,103 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/task')]
+#[Route('/tasks')]
 class TaskController extends AbstractController
 {
-    #[Route('/', name: 'app_task_index', methods: ['GET'])]
-    public function index(TaskRepository $taskRepository): Response
-    {
-        return $this->render('task/index.html.twig', [
-            'tasks' => $taskRepository->findAll(),
-        ]);
+  #[Route('/', name: 'app_task_index', methods: ['GET'])]
+  public function index(TaskRepository $taskRepository): Response
+  {
+    return $this->render('task/tasks.html.twig', [
+      'tasks' => $taskRepository->findAll(),
+    ]);
+  }
+
+  #[Route('/new', name: 'app_task_new', methods: ['GET', 'POST'])]
+  public function new(Request $request, EntityManagerInterface $entityManager): Response
+  {
+    $task = new Task();
+    $form = $this->createForm(TaskType::class, $task);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+
+      $task->setCreatedAt(new \DateTimeImmutable());
+      $task->setIsDone(false);
+      $task->setUser($this->getUser());
+
+      $entityManager->persist($task);
+      $entityManager->flush();
+
+      return $this->redirectToRoute('app_task_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route('/new', name: 'app_task_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $task = new Task();
-        $form = $this->createForm(TaskType::class, $task);
-        $form->handleRequest($request);
+    return $this->render('task/new.html.twig', [
+      'task' => $task,
+      'form' => $form,
+    ]);
+  }
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($task);
-            $entityManager->flush();
+  #[Route('/{id}', name: 'app_task_show', methods: ['GET'])]
+  public function show(Task $task): Response
+  {
+    return $this->render('task/show.html.twig', [
+      'task' => $task,
+    ]);
+  }
 
-            return $this->redirectToRoute('app_task_index', [], Response::HTTP_SEE_OTHER);
-        }
+  #[Route('/{id}/edit', name: 'app_task_edit', methods: ['GET', 'POST'])]
+  public function edit(Request $request, Task $task, EntityManagerInterface $entityManager): Response
+  {
+    $form = $this->createForm(TaskType::class, $task);
+    $form->handleRequest($request);
 
-        return $this->render('task/new.html.twig', [
-            'task' => $task,
-            'form' => $form,
-        ]);
+    if ($form->isSubmitted() && $form->isValid()) {
+
+      $task->setIsDone($task->isIsDone());
+      $entityManager->persist($task);
+      $entityManager->flush();
+
+      return $this->redirectToRoute('app_task_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route('/{id}', name: 'app_task_show', methods: ['GET'])]
-    public function show(Task $task): Response
-    {
-        return $this->render('task/show.html.twig', [
-            'task' => $task,
-        ]);
+    return $this->render('task/edit.html.twig', [
+      'task' => $task,
+      'form' => $form,
+    ]);
+  }
+
+  #[Route('/{id}', name: 'app_task_delete', methods: ['POST'])]
+  public function delete(Request $request, Task $task, EntityManagerInterface $entityManager): Response
+  {
+    if ($this->isCsrfTokenValid('delete' . $task->getId(), $request->request->get('_token'))) {
+      $entityManager->remove($task);
+      $entityManager->flush();
     }
 
-    #[Route('/{id}/edit', name: 'app_task_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Task $task, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createForm(TaskType::class, $task);
-        $form->handleRequest($request);
+    return $this->redirectToRoute('app_task_index', [], Response::HTTP_SEE_OTHER);
+  }
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_task_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('task/edit.html.twig', [
-            'task' => $task,
-            'form' => $form,
-        ]);
+  #[Route('/{id}/toggle', name: 'task_toggle', methods: ['GET', 'POST'])]
+  public function taskToggle(Request $request, TaskRepository $taskRepository, EntityManagerInterface $entityManager): Response
+  {
+    $id = $request->query->get('id');
+    $isDone = $request->query->get('isDone');
+    $task = $taskRepository->find($id);
+    $doneLabel = 'faite.';
+    if ($isDone == 1) {
+      $task->toggleTask(true);
+    } else {
+      $task->toggleTask(false);
+      $doneLabel = 'à faire.';
     }
 
-    #[Route('/{id}', name: 'app_task_delete', methods: ['POST'])]
-    public function delete(Request $request, Task $task, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$task->getId(), $request->request->get('_token'))) {
-            $entityManager->remove($task);
-            $entityManager->flush();
-        }
+    $entityManager->persist($task);
+    $entityManager->flush();
 
-        return $this->redirectToRoute('app_task_index', [], Response::HTTP_SEE_OTHER);
-    }
+    $this->addFlash('success', sprintf('La tâche %s a bien été marquée comme ' . $doneLabel, $task->getTitle()));
+
+    return $this->json(
+      $task->getTitle() . ' : ' . $doneLabel 
+    );
+  }
 }

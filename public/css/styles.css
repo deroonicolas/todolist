@@ -1,9 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Hurricane&display=swap');
+
+body {
+  background-color: rgb(222, 241, 235);
+}
+
+.header-text {
+  color: rgba(239, 35, 3, 0.954);
+  font-size: 3em;
+  font-family: 'Hurricane';
+}
+
 .portlet {
   margin: 1em;
   padding: 0.3em;
   border: solid 1px;
-  width: 15rem;
-  max-height: 18rem;
+  width: 10rem;
+  height: 19rem;
   cursor: pointer;
 }
 
@@ -38,5 +50,9 @@
 }
 
 .done {
+  background-color: rgb(222, 241, 235);
+}
+
+.edit-new {
   background-color: rgb(222, 241, 235);
 }
