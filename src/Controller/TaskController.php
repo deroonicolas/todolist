@@ -87,7 +87,7 @@ class TaskController extends AbstractController
     return $this->redirectToRoute('app_task_index', [], Response::HTTP_SEE_OTHER);
   }
 
-  #[Route('/{id}/toggle', name: 'task_toggle', methods: ['GET', 'POST'])]
+  #[Route('/{id}/toggle', name: 'task_toggle', methods: ['GET'])]
   public function taskToggle(Request $request, TaskRepository $taskRepository, EntityManagerInterface $entityManager): Response
   {
     $id = $request->query->get('id');
@@ -95,19 +95,17 @@ class TaskController extends AbstractController
     $task = $taskRepository->find($id);
     $doneLabel = 'faite.';
     if ($isDone == 1) {
-      $task->toggleTask(true);
-    } else {
       $task->toggleTask(false);
+    } else {
+      $task->toggleTask(true);
       $doneLabel = 'à faire.';
     }
 
     $entityManager->persist($task);
     $entityManager->flush();
 
-    $this->addFlash('success', sprintf('La tâche %s a bien été marquée comme ' . $doneLabel, $task->getTitle()));
-
     return $this->json(
-      $task->getTitle() . ' : ' . $doneLabel 
+      $id
     );
   }
 }

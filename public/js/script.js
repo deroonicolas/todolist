@@ -1,35 +1,3 @@
-$(function () {
-  $('.column').sortable({
-    connectWith: ".column",
-    handle: ".portlet-header",
-  })
-
-  $('.portlet').on('mouseup', function (event) {
-    const portlet = $(this)
-    const taskId = portlet.attr('id')
-    if (portlet.parent().hasClass('todo')) {
-      // portlet.removeClass('bg-info').addClass('bg-white')
-      toggleTask(taskId, 1)
-    } else {
-      // portlet.removeClass('bg-white').addClass('bg-info')
-      toggleTask(taskId, 0)
-    }
-  })
-
-  // $( ".portlet" )
-  //   .addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
-  //   .find( ".portlet-header" )
-  //     .addClass( "ui-widget-header ui-corner-all" )
-
-
-  // $( ".portlet-toggle" ).on('click', function() {
-  //   var icon = $( this );
-  //   icon.toggleClass( "ui-icon-minusthick ui-icon-plusthick" );
-  //   icon.closest( ".portlet" ).find( ".portlet-content" ).toggle();
-  // });
-
-})
-
 function toggleTask(taskId, isDone) {
   $.ajax({
     url: '/tasks/' + taskId + '/toggle',
@@ -38,8 +6,20 @@ function toggleTask(taskId, isDone) {
       'id': taskId,
       'isDone': isDone
     }
-  }).done(function (response) {
-    console.log(response)
+  }).done(function (responseId) {
+    const taskButton = $('#task' + responseId)
+    const portlet = taskButton.closest('.portlet')
+    if (isDone) {
+      taskButton.text('Marquer comme faite')
+      taskButton.attr('onclick', 'toggleTask(' + responseId + ', 0)')
+      portlet.addClass('bg-white').removeClass('bg-info')
+      alert('La tâche a bien été marquée comme à faire')
+    } else {
+      taskButton.text('Marquer comme à faire')
+      taskButton.attr('onclick', 'toggleTask(' + responseId + ', 1)')
+      portlet.addClass('bg-info').removeClass('bg-white')
+      alert('La tâche a bien été marquée comme faite')
+    }
   }).fail(function (response) {
     alert("Une erreur est survenue lors de l'édition de la tâche")
   })

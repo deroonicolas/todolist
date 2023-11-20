@@ -1,5 +1,5 @@
 
-<div class="d-flex flex-row justify-content-evenly bg-white p-2">
+<div class="d-flex flex-row justify-content-evenly p-2">
   <div id="logoImage"><a href="{{ path('app_home') }}"><img id="logo" href="#" src="{{ asset('img/logo.png') }}" alt="Logo"></a></div>
   <div>
       <h1 class="header-text fw-bold">Todo List</h1>
@@ -11,7 +11,9 @@
       <div class="mt-1"><a href=" {{ path('app_logout') }} ">Se déconnecter</a></div>
     </div>
   {% else %}
+  <div>
     <button class="text-decoration-none text-white btn btn-md btn-success btn-rounded m-3" onclick="window.location='{{ path('app_login') }}'">Se connecter</button>
-  {% endif %}
+  </div>
+    {% endif %}
 </div>
 <div class="container-fluid bg-secondary p-1"></div>

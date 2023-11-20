@@ -26,6 +26,7 @@ class Task
     private ?bool $isDone = null;
 
     #[ORM\ManyToOne(inversedBy: 'tasks', cascade : ["persist"])]
+    #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'tasks')]
@@ -93,11 +94,10 @@ class Task
     public function setUser(?User $user): static
     {
         $this->user = $user;
-
         return $this;
     }
 
-    public function toggleTask(?bool $flag): static
+    public function toggleTask(bool $flag): static
     {
         $this->isDone = $flag;
         return $this;

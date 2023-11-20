@@ -8,38 +8,17 @@
 
 <div>
 
-  <div class="bg-white">  
-    <button class="btn btn-md btn-primary text-decoration-none text-white m-3" type="button" onclick="window.location='/tasks/new'">Créer une nouvelle tâche</button>
+  <div>  
+    <button class="btn btn-md btn-primary text-decoration-none text-white m-3" 
+      type="button" onclick="window.location='/tasks/new'">Créer une nouvelle tâche</button>
   </div>
 
-  <div class="container-fluid min-vh-100 d-flex flex-column">
+  <div class="container-fluid d-flex flex-wrap">
 
-    <div class="row text-center">
-      <div class="col-md-6 col-sm-3 todo py-2"><h1><em>A faire</em></h1></div>
-      <div class="col-md-6 col-sm-3 done py-2"><h1><em>Fait</em></h1></div>
-    </div>
-
-    <div class="row d-flex flex-grow-1">
-
-      <!-- Todo -->
-      <div class="column col-md-6 col-sm-3 d-flex flex-wrap todo">
         {% for task in tasks %}
-          {% if not task.isDone %}
             {% include 'task/task.html.twig' with { 'task' : task } %}
-          {% endif %}
         {% endfor %} 
-      </div>
-
-      <!-- Done --> 
-      <div class="column col-md-6 col-sm-3 d-flex flex-wrap done">
-        {% for task in tasks %}
-          {% if task.isDone %}
-            {% include 'task/task.html.twig' with { 'task' : task } %}
-          {% endif %}
-        {% endfor %} 
-      </div>
-        
-    </div>
+      
   </div>
 
 </div>
